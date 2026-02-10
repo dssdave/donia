@@ -40,7 +40,7 @@ export function CharacterSelector() {
                             initial={{ opacity: 0, scale: 0.9, y: 10 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                            className="absolute top-12 left-0 w-64 bg-white rounded-2xl shadow-xl p-4 z-50 flex flex-col gap-2"
+                            className="absolute top-12 right-0 w-64 bg-white rounded-2xl shadow-xl p-4 z-50 flex flex-col gap-2"
                         >
                             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">
                                 Choose Partner
@@ -53,8 +53,8 @@ export function CharacterSelector() {
                                         setIsOpen(false);
                                     }}
                                     className={`flex items-center gap-3 p-3 rounded-xl transition-colors text-left ${activeCharacter.id === char.id
-                                            ? "bg-brand-pink/10 ring-2 ring-brand-pink"
-                                            : "hover:bg-gray-50"
+                                        ? "bg-brand-pink/10 ring-2 ring-brand-pink"
+                                        : "hover:bg-gray-50"
                                         }`}
                                 >
                                     <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-2xl">
