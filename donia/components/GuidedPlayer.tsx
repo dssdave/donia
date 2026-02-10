@@ -4,15 +4,18 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Routine } from "@/lib/data/routines";
 import { PastelButton } from "./ui/PastelButton";
-import { Trophy, Timer, CheckCircle, ArrowRight } from "lucide-react";
+import { Trophy, Timer } from "lucide-react";
 import Link from "next/link";
 import confetti from "canvas-confetti";
+import { useCharacter } from "@/context/CharacterContext";
+import Image from "next/image";
 
 interface GuidedPlayerProps {
     routine: Routine;
 }
 
 export function GuidedPlayer({ routine }: GuidedPlayerProps) {
+    const { character } = useCharacter();
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
@@ -20,14 +23,26 @@ export function GuidedPlayer({ routine }: GuidedPlayerProps) {
 
     const currentStep = routine.steps[currentStepIndex];
 
-    // Start timer when step changes
+    // Map routine step IDs to asset names
+    const getImagePath = (stepId: string) => {
+        const assetMap: Record<string, string> = {
+            "neck-roll": "neck-roll",
+            "sky-reach": "sky-reach",
+            "toe-touch": "toe-touch"
+        };
+
+        const assetName = assetMap[stepId] || "neck-roll";
+        // If character is bunny, use asset. If fox, we don't have assets yet, so we could fallback
+        // But for now let's point to the path. Next/Image onError will handle missing ones.
+        return `/assets/characters/${character.id}/${assetName}.png`;
+    };
+
     useEffect(() => {
         if (isCompleted) return;
         setTimeLeft(currentStep.duration);
         setIsPlaying(true);
     }, [currentStepIndex, currentStep, isCompleted]);
 
-    // Timer logic
     useEffect(() => {
         if (!isPlaying || timeLeft <= 0) return;
 
@@ -78,7 +93,7 @@ export function GuidedPlayer({ routine }: GuidedPlayerProps) {
                     Smashed it! 🎉
                 </h2>
                 <p className="text-gray-500 mb-8">
-                    You completed the {routine.title} routine. Amazing job!
+                    You completed the {routine.title} routine with {character.name}! Amazing job!
                 </p>
                 <Link href="/">
                     <PastelButton>Back to Home</PastelButton>
@@ -92,8 +107,8 @@ export function GuidedPlayer({ routine }: GuidedPlayerProps) {
             {/* Progress Bar */}
             <div className="w-full bg-gray-200 h-2 rounded-full mb-6">
                 <motion.div
-                    className={`h-full rounded-full ${routine.color.replace("bg-", "bg-")}`} // Simplification for now, assuming color is bg-class
-                    style={{ backgroundColor: "var(--color-brand-pink)" }} // Fallback
+                    className={`h-full rounded-full ${routine.color.replace("bg-", "bg-")}`}
+                    style={{ backgroundColor: "var(--color-brand-pink)" }}
                     initial={{ width: 0 }}
                     animate={{
                         width: `${((currentStepIndex + 1) / routine.steps.length) * 100}%`,
@@ -111,12 +126,38 @@ export function GuidedPlayer({ routine }: GuidedPlayerProps) {
                         exit={{ opacity: 0, x: -20 }}
                         className="w-full"
                     >
-                        {/* Instruction/Visual Placeholder */}
+                        {/* Instruction/Visual Area */}
                         <div className="aspect-square bg-white rounded-3xl shadow-sm border-2 border-gray-100 flex items-center justify-center mb-8 relative overflow-hidden">
-                            <span className="text-6xl animate-pulse">🧘‍♀️</span>
+                            <div className="relative w-full h-full p-6">
+                                {/* Image Container with Fallback logic via CSS/JS or just render */}
+                                <Image
+                                    src={getImagePath(currentStep.id)}
+                                    alt={currentStep.title}
+                                    fill
+                                    className="object-contain"
+                                    priority
+                                    sizes="(max-width: 768px) 100vw, 400px"
+                                    onError={(e) => {
+                                        // Very basic fallback: hide image, show emoji
+                                        const target = e.target as HTMLImageElement;
+                                        target.style.opacity = '0';
+                                        const parent = target.parentElement?.parentElement;
+                                        if (parent) {
+                                            // Create a span only if it doesn't exist
+                                            if (!parent.querySelector('.fallback-emoji')) {
+                                                const span = document.createElement('span');
+                                                span.className = 'fallback-emoji text-6xl animate-pulse absolute inset-0 flex items-center justify-center';
+                                                span.innerText = '🧘‍♀️'; // Default emoji
+                                                parent.appendChild(span);
+                                            }
+                                        }
+                                    }}
+                                />
+                            </div>
+
                             {/* Overlay Timer if active */}
                             {isPlaying && (
-                                <div className="absolute top-4 right-4 bg-white/80 backdrop-blur px-3 py-1 rounded-full text-brand-text font-bold flex items-center gap-2">
+                                <div className="absolute top-4 right-4 bg-white/80 backdrop-blur px-3 py-1 rounded-full text-brand-text font-bold flex items-center gap-2 z-10">
                                     <Timer className="w-4 h-4" />
                                     {timeLeft}s
                                 </div>

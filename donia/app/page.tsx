@@ -1,12 +1,16 @@
 import { routines } from "@/lib/data/routines";
 import { RoutineCard } from "@/components/RoutineCard";
 import { Sparkles } from "lucide-react";
+import { CharacterSelector } from "@/components/CharacterSelector";
 
 export default function Home() {
   return (
     <main className="p-6 min-h-screen bg-white">
       {/* Header */}
-      <header className="mb-8 text-center">
+      <header className="mb-8 flex flex-col items-center">
+        <div className="w-full flex justify-end mb-2">
+          <CharacterSelector />
+        </div>
         <div className="inline-flex items-center justify-center p-3 mb-4 rounded-full bg-brand-pink/20">
           <Sparkles className="w-6 h-6 text-brand-pink" />
         </div>
