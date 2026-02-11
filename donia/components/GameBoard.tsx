@@ -103,13 +103,17 @@ export function GameBoard() {
                 <div className="absolute inset-0 bg-[#8b5a2b] rounded-xl border-b-8 border-[#5d3a1a] shadow-2xl" />
                 <div className="absolute inset-0 bg-white/5 pointer-events-none rounded-xl" />
 
-                {/* Labels */}
-                <span className="relative z-10 text-[#f3e5ab] font-black text-[10px] uppercase tracking-[0.2em] opacity-80 mb-1">
-                    Ready to Race?
-                </span>
-                <span className="relative z-10 text-white font-black text-xl uppercase tracking-widest drop-shadow-md">
-                    Start
-                </span>
+                {/* Labels - Only show if someone is at START (pos 0) */}
+                {allPositions.some(p => p.pos === 0) && (
+                    <>
+                        <span className="relative z-10 text-[#f3e5ab] font-black text-[10px] uppercase tracking-[0.2em] opacity-80 mb-1">
+                            Ready to Race?
+                        </span>
+                        <span className="relative z-10 text-white font-black text-xl uppercase tracking-widest drop-shadow-md">
+                            Start
+                        </span>
+                    </>
+                )}
 
                 {/* Plank Detail Lines */}
                 <div className="absolute left-4 top-1/2 right-4 h-[1px] bg-black/10 z-0" />
