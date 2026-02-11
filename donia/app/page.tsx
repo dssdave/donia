@@ -10,6 +10,7 @@ import { PastelButton } from "@/components/ui/PastelButton";
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
 import { useCharacter, CHARACTERS } from "@/context/CharacterContext";
+import { Scoreboard } from "@/components/Scoreboard";
 
 export default function Home() {
   const { gameState, currentRoutine, resetGame, currentLevel } = useGame();
@@ -91,8 +92,8 @@ export default function Home() {
     <main className="p-6 min-h-screen bg-white">
       {/* Header */}
       <header className="mb-8 flex flex-col items-center">
-        <div className="w-full flex justify-end mb-2">
-          <CharacterSelector />
+        <div className="w-full flex justify-center mb-6">
+          <Scoreboard />
         </div>
         <div className="inline-flex items-center justify-center p-3 mb-4 rounded-full bg-brand-pink/20">
           <Sparkles className="w-6 h-6 text-brand-pink" />
