@@ -40,16 +40,21 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }, [playerChar.id]);
 
     const startLevel = (levelIndex: number) => {
-        if (levelIndex > currentLevel) return; // Can't skip ahead
+        if (levelIndex > currentLevel) return; // Can't play locked levels
         setCurrentRoutine(routines[levelIndex] || null);
         setGameState("playing");
     };
 
     const completeLevel = (success: boolean) => {
         if (success) {
-            if (currentLevel < 9) {
-                setCurrentLevel(prev => prev + 1);
-            } else {
+            // currentRoutine is the one being played (index 0-9)
+            // If we finish routine i, we move to position i+1
+            const finishedLevelIndex = routines.indexOf(currentRoutine!);
+            if (finishedLevelIndex + 1 > currentLevel) {
+                setCurrentLevel(finishedLevelIndex + 1);
+            }
+
+            if (currentLevel >= 10 && finishedLevelIndex === 9) {
                 setGameState("won");
             }
             advanceOpponents();
@@ -68,7 +73,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
             const next = { ...prev };
             Object.keys(next).forEach(id => {
                 // Opponents have a 70% chance to move forward
-                if (Math.random() > 0.3 && next[id] < 9) {
+                if (Math.random() > 0.3 && next[id] < 11) {
                     next[id] += 1;
                 }
             });

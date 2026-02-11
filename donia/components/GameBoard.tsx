@@ -7,19 +7,20 @@ import { GameSprite } from "./GameSprite";
 import { motion } from "framer-motion";
 import { routines } from "@/lib/data/routines";
 
-// Path coordinates for 10 spaces (0-9)
+// Path coordinates for START + 10 levels + FINISH
 const PATH = [
-    { x: 150, y: 750 }, // Start
-    { x: 250, y: 680 },
-    { x: 100, y: 610 },
-    { x: 200, y: 540 },
-    { x: 280, y: 470 },
-    { x: 100, y: 400 },
-    { x: 50, y: 330 },
-    { x: 180, y: 260 },
-    { x: 250, y: 190 },
-    { x: 120, y: 120 },
-    { x: 150, y: 50 },  // Finish
+    { x: 150, y: 850 }, // START (index 0)
+    { x: 100, y: 780 }, // Level 1 (index 1)
+    { x: 200, y: 710 }, // Level 2
+    { x: 280, y: 640 }, // Level 3
+    { x: 100, y: 570 }, // Level 4
+    { x: 50, y: 500 },  // Level 5
+    { x: 180, y: 430 }, // Level 6
+    { x: 250, y: 360 }, // Level 7
+    { x: 120, y: 290 }, // Level 8
+    { x: 50, y: 220 },  // Level 9
+    { x: 150, y: 150 }, // Level 10
+    { x: 150, y: 50 },  // FINISH (index 11)
 ];
 
 export function GameBoard() {
@@ -85,11 +86,19 @@ export function GameBoard() {
                 />
             </svg>
 
+            {/* START Area */}
+            <div
+                className="absolute -translate-x-1/2 -translate-y-1/2 bg-white/20 border-4 border-white/40 rounded-3xl flex items-center justify-center p-4 shadow-xl"
+                style={{ left: PATH[0].x, top: PATH[0].y + 100, width: 100, height: 60 }}
+            >
+                <span className="text-white font-black text-sm uppercase tracking-widest">Start</span>
+            </div>
+
             {/* Spaces */}
             {routines.map((routine, index) => {
-                // Uniform square shapes with bevel
-                const pos = PATH[index];
-                const isLocked = index > currentLevel;
+                const roadIndex = index + 1; // Levels are at PATH indices 1 to 10
+                const pos = PATH[roadIndex];
+                const isLocked = index > currentLevel; // Routine i is locked if currentLevel < i
                 const isCurrent = index === currentLevel;
 
                 return (
@@ -118,7 +127,7 @@ export function GameBoard() {
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ repeat: Infinity, duration: 2 }}
                 className="absolute -translate-x-1/2 -translate-y-1/2 text-6xl drop-shadow-lg"
-                style={{ left: PATH[10].x, top: PATH[10].y + 100 }}
+                style={{ left: PATH[11].x, top: PATH[11].y + 100 }}
             >
                 🏁
             </motion.div>
