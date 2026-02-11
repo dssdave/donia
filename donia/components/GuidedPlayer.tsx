@@ -8,7 +8,9 @@ import { Trophy, Timer } from "lucide-react";
 import Link from "next/link";
 import confetti from "canvas-confetti";
 import { useCharacter } from "@/context/CharacterContext";
+import { useGame } from "@/context/GameContext";
 import Image from "next/image";
+import { XCircle, AlertCircle } from "lucide-react";
 
 interface GuidedPlayerProps {
     routine: Routine;
@@ -16,10 +18,12 @@ interface GuidedPlayerProps {
 
 export function GuidedPlayer({ routine }: GuidedPlayerProps) {
     const { character } = useCharacter();
+    const { completeLevel } = useGame();
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
     const [isCompleted, setIsCompleted] = useState(false);
+    const [isFailed, setIsFailed] = useState(false);
 
     const currentStep = routine.steps[currentStepIndex];
 
@@ -38,10 +42,10 @@ export function GuidedPlayer({ routine }: GuidedPlayerProps) {
     };
 
     useEffect(() => {
-        if (isCompleted) return;
+        if (isCompleted || isFailed) return;
         setTimeLeft(currentStep.duration);
         setIsPlaying(true);
-    }, [currentStepIndex, currentStep, isCompleted]);
+    }, [currentStepIndex, currentStep, isCompleted, isFailed]);
 
     useEffect(() => {
         if (!isPlaying || timeLeft <= 0) return;
@@ -51,6 +55,9 @@ export function GuidedPlayer({ routine }: GuidedPlayerProps) {
                 if (prev <= 1) {
                     clearInterval(timer);
                     setIsPlaying(false);
+                    // FAILURE CONDITION: Timer ran out before user finished
+                    setIsFailed(true);
+                    completeLevel(false);
                     return 0;
                 }
                 return prev - 1;
@@ -65,6 +72,7 @@ export function GuidedPlayer({ routine }: GuidedPlayerProps) {
             setCurrentStepIndex((prev) => prev + 1);
         } else {
             setIsCompleted(true);
+            completeLevel(true);
             confetti({
                 particleCount: 100,
                 spread: 70,
@@ -78,6 +86,29 @@ export function GuidedPlayer({ routine }: GuidedPlayerProps) {
         setTimeLeft(0);
         setIsPlaying(false);
     };
+
+    if (isFailed) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6">
+                <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="mb-6 p-6 bg-red-100 rounded-full"
+                >
+                    <XCircle className="w-16 h-16 text-red-500" />
+                </motion.div>
+                <h2 className="text-3xl font-bold mb-4 text-brand-text">
+                    Out of Time! ⏰
+                </h2>
+                <p className="text-gray-500 mb-8">
+                    Don't give up! You didn't get the point this time, but you can try again.
+                </p>
+                <Link href="/">
+                    <PastelButton variant="secondary">Back to Board</PastelButton>
+                </Link>
+            </div>
+        );
+    }
 
     if (isCompleted) {
         return (
@@ -93,10 +124,10 @@ export function GuidedPlayer({ routine }: GuidedPlayerProps) {
                     Smashed it! 🎉
                 </h2>
                 <p className="text-gray-500 mb-8">
-                    You completed the {routine.title} routine with {character.name}! Amazing job!
+                    You completed the level and moved forward on the board!
                 </p>
                 <Link href="/">
-                    <PastelButton>Back to Home</PastelButton>
+                    <PastelButton>Back to Board</PastelButton>
                 </Link>
             </div>
         );
@@ -178,22 +209,19 @@ export function GuidedPlayer({ routine }: GuidedPlayerProps) {
             <div className="mt-auto py-6">
                 {timeLeft > 0 ? (
                     <PastelButton
-                        onClick={skipTimer}
-                        variant="secondary"
-                        className="w-full justify-center"
-                    >
-                        Skip Timer ({timeLeft}s)
-                    </PastelButton>
-                ) : (
-                    <PastelButton
                         onClick={handleNext}
                         className="w-full justify-center"
                         icon
                     >
                         {currentStepIndex === routine.steps.length - 1
-                            ? "Finish Routine"
-                            : "Next Stretch"}
+                            ? "I'm Done! Finish level"
+                            : "I'm Done! Next Stretch"}
                     </PastelButton>
+                ) : (
+                    <div className="flex items-center justify-center gap-2 p-4 bg-red-50 text-red-500 rounded-2xl font-bold animate-pulse">
+                        <AlertCircle className="w-5 h-5" />
+                        Time's Up!
+                    </div>
                 )}
             </div>
         </div>

@@ -1,9 +1,56 @@
+"use client";
+
 import { routines } from "@/lib/data/routines";
-import { RoutineCard } from "@/components/RoutineCard";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Trophy } from "lucide-react";
 import { CharacterSelector } from "@/components/CharacterSelector";
+import { GameBoard } from "@/components/GameBoard";
+import { useGame } from "@/context/GameContext";
+import { GuidedPlayer } from "@/components/GuidedPlayer";
+import { PastelButton } from "@/components/ui/PastelButton";
+import confetti from "canvas-confetti";
+import { useEffect } from "react";
 
 export default function Home() {
+  const { gameState, currentRoutine, resetGame } = useGame();
+
+  useEffect(() => {
+    if (gameState === "won") {
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.6 },
+        colors: ["#FFD700", "#FFA500", "#FF6347"],
+      });
+    }
+  }, [gameState]);
+
+  if (gameState === "playing" && currentRoutine) {
+    return (
+      <main className="min-h-screen bg-white p-6">
+        <GuidedPlayer routine={currentRoutine} />
+      </main>
+    );
+  }
+
+  if (gameState === "won") {
+    return (
+      <main className="min-h-screen bg-brand-lavender p-8 flex flex-col items-center justify-center text-center">
+        <div className="mb-8 p-8 bg-white rounded-full shadow-xl">
+          <Trophy className="w-24 h-24 text-brand-pink animate-bounce" />
+        </div>
+        <h1 className="text-4xl font-bold mb-4 text-brand-text">
+          CHAMPION! 🏆
+        </h1>
+        <p className="text-xl text-gray-600 mb-12">
+          You finished the entire road! You're a stretching superstar!
+        </p>
+        <PastelButton onClick={resetGame}>
+          Play Again!
+        </PastelButton>
+      </main>
+    );
+  }
+
   return (
     <main className="p-6 min-h-screen bg-white">
       {/* Header */}
@@ -15,19 +62,15 @@ export default function Home() {
           <Sparkles className="w-6 h-6 text-brand-pink" />
         </div>
         <h1 className="text-3xl font-bold mb-2 text-brand-text">
-          Hi, Superstar! <span className="inline-block animate-bounce">✨</span>
+          Donia Road <span className="inline-block animate-bounce">✨</span>
         </h1>
-        <p className="text-gray-500">Ready to stretch today?</p>
+        <p className="text-gray-500 text-center">Beat your friends to the finish line!</p>
       </header>
 
-      {/* Routine Grid */}
-      <section>
-        <h2 className="text-xl font-bold mb-4 px-2">Your Routines</h2>
-        <div className="space-y-4">
-          {routines.map((routine) => (
-            <RoutineCard key={routine.id} routine={routine} />
-          ))}
-        </div>
+      {/* Game Board */}
+      <section className="px-2">
+        <h2 className="text-xl font-bold mb-4">Level Road 🗺️</h2>
+        <GameBoard />
       </section>
 
       {/* Quick Tips / Fun Section */}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Quicksand } from "next/font/google";
 import "./globals.css";
 import { CharacterProvider } from "@/context/CharacterContext";
+import { GameProvider } from "@/context/GameContext";
 
 const quicksand = Quicksand({ subsets: ["latin"] });
 
@@ -21,7 +22,9 @@ export default function RootLayout({
       <body className={`${quicksand.className} bg-gray-100 flex justify-center items-center min-h-screen`}>
         <div className="mobile-container">
           <CharacterProvider>
-            {children}
+            <GameProvider>
+              {children}
+            </GameProvider>
           </CharacterProvider>
         </div>
       </body>
