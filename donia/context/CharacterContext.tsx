@@ -15,6 +15,8 @@ interface Character {
 interface CharacterContextType {
     character: Character;
     setCharacter: (id: CharacterId) => void;
+    hasChosenCharacter: boolean;
+    setHasChosenCharacter: (val: boolean) => void;
 }
 
 const characters: Record<CharacterId, Character> = {
@@ -38,6 +40,7 @@ const CharacterContext = createContext<CharacterContextType | undefined>(undefin
 
 export function CharacterProvider({ children }: { children: ReactNode }) {
     const [characterId, setCharacterId] = useState<CharacterId>("bunny");
+    const [hasChosenCharacter, setHasChosenCharacter] = useState(false);
 
     const setCharacterIDWrapper = (id: CharacterId) => {
         setCharacterId(id);
@@ -45,7 +48,12 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 
     return (
         <CharacterContext.Provider
-            value={{ character: characters[characterId], setCharacter: setCharacterIDWrapper }}
+            value={{
+                character: characters[characterId],
+                setCharacter: setCharacterIDWrapper,
+                hasChosenCharacter,
+                setHasChosenCharacter
+            }}
         >
             {children}
         </CharacterContext.Provider>

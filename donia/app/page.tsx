@@ -9,9 +9,11 @@ import { GuidedPlayer } from "@/components/GuidedPlayer";
 import { PastelButton } from "@/components/ui/PastelButton";
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
+import { useCharacter, CHARACTERS } from "@/context/CharacterContext";
 
 export default function Home() {
-  const { gameState, currentRoutine, resetGame } = useGame();
+  const { gameState, currentRoutine, resetGame, currentLevel } = useGame();
+  const { hasChosenCharacter, setHasChosenCharacter, setCharacter } = useCharacter();
 
   useEffect(() => {
     if (gameState === "won") {
@@ -23,6 +25,40 @@ export default function Home() {
       });
     }
   }, [gameState]);
+
+  // Onboarding Screen
+  if (!hasChosenCharacter) {
+    return (
+      <main className="p-8 min-h-screen bg-white flex flex-col items-center justify-center text-center">
+        <div className="mb-8 p-6 bg-brand-pink/20 rounded-full animate-bounce">
+          <Sparkles className="w-16 h-16 text-brand-pink" />
+        </div>
+        <h1 className="text-4xl font-black mb-4 text-brand-text">
+          Exercise for Kids
+        </h1>
+        <p className="text-xl text-gray-500 mb-12">Choose your partner to start!</p>
+
+        <div className="grid grid-cols-1 gap-4 w-full max-w-sm">
+          {CHARACTERS.map((char) => (
+            <button
+              key={char.id}
+              onClick={() => {
+                setCharacter(char.id);
+                setHasChosenCharacter(true);
+              }}
+              className="bg-gray-50 p-6 rounded-3xl border-2 border-transparent hover:border-brand-pink hover:bg-white transition-all text-left flex items-center gap-6 shadow-sm hover:shadow-md"
+            >
+              <span className="text-5xl">{char.avatar}</span>
+              <div>
+                <h3 className="text-xl font-bold text-brand-text">{char.name}</h3>
+                <p className="text-sm text-gray-500">{char.description}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </main>
+    );
+  }
 
   if (gameState === "playing" && currentRoutine) {
     return (
@@ -62,23 +98,15 @@ export default function Home() {
           <Sparkles className="w-6 h-6 text-brand-pink" />
         </div>
         <h1 className="text-3xl font-bold mb-2 text-brand-text">
-          Donia Road <span className="inline-block animate-bounce">✨</span>
+          Game <span className="inline-block animate-bounce">✨</span>
         </h1>
         <p className="text-gray-500 text-center">Beat your friends to the finish line!</p>
       </header>
 
       {/* Game Board */}
       <section className="px-2">
-        <h2 className="text-xl font-bold mb-4">Level Road 🗺️</h2>
+        <h2 className="text-xl font-bold mb-4">Level {currentLevel + 1}</h2>
         <GameBoard />
-      </section>
-
-      {/* Quick Tips / Fun Section */}
-      <section className="mt-10 p-6 rounded-3xl bg-brand-lavender text-brand-text text-center">
-        <h3 className="font-bold mb-2">💡 Daily Tip</h3>
-        <p className="text-sm opacity-80">
-          "Don't forget to breathe deep like a balloon!" 🎈
-        </p>
       </section>
     </main>
   );
