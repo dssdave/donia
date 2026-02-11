@@ -37,7 +37,7 @@ export default function Home() {
         <h1 className="text-4xl font-black mb-4 text-brand-text">
           Exercise for Kids
         </h1>
-        <p className="text-xl text-gray-500 mb-12">Choose your partner to start!</p>
+        <p className="text-xl text-gray-500 mb-12">Choose your character to start!</p>
 
         <div className="grid grid-cols-1 gap-4 w-full max-w-sm">
           {CHARACTERS.map((char) => (
@@ -91,17 +91,22 @@ export default function Home() {
   return (
     <main className="p-6 min-h-screen bg-white">
       {/* Header */}
-      <header className="mb-8 flex flex-col items-center">
-        <div className="w-full flex justify-center mb-6">
+      <header className="mb-8 flex flex-col items-center gap-4">
+        <div className="flex flex-col items-stretch gap-4 w-full max-w-sm">
           <Scoreboard />
+
+          <div className="bg-white/95 backdrop-blur-md px-8 py-5 rounded-[40px] shadow-lg border-2 border-brand-pink/10 flex flex-col items-center text-center">
+            <div className="inline-flex items-center justify-center p-3 mb-3 rounded-full bg-brand-pink/20">
+              <Sparkles className="w-6 h-6 text-brand-pink" />
+            </div>
+            <h1 className="text-3xl font-black mb-1 text-brand-text leading-none">
+              Game <span className="inline-block animate-bounce">✨</span>
+            </h1>
+            <p className="text-sm font-bold text-gray-400 uppercase tracking-tighter">
+              Beat your friends to the finish line!
+            </p>
+          </div>
         </div>
-        <div className="inline-flex items-center justify-center p-3 mb-4 rounded-full bg-brand-pink/20">
-          <Sparkles className="w-6 h-6 text-brand-pink" />
-        </div>
-        <h1 className="text-3xl font-bold mb-2 text-brand-text">
-          Game <span className="inline-block animate-bounce">✨</span>
-        </h1>
-        <p className="text-gray-500 text-center">Beat your friends to the finish line!</p>
       </header>
 
       {/* Game Board */}
