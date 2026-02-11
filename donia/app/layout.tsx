@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${quicksand.className} bg-gray-100 flex justify-center items-center min-h-screen`}>
         <div className="mobile-container">
           <CharacterProvider>
