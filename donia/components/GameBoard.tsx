@@ -9,18 +9,18 @@ import { routines } from "@/lib/data/routines";
 
 // Path coordinates for START + 10 levels + FINISH
 const PATH = [
-    { x: 150, y: 850 }, // START (index 0)
-    { x: 100, y: 780 }, // Level 1 (index 1)
-    { x: 200, y: 710 }, // Level 2
-    { x: 280, y: 640 }, // Level 3
-    { x: 100, y: 570 }, // Level 4
-    { x: 50, y: 500 },  // Level 5
-    { x: 180, y: 430 }, // Level 6
-    { x: 250, y: 360 }, // Level 7
-    { x: 120, y: 290 }, // Level 8
-    { x: 50, y: 220 },  // Level 9
-    { x: 150, y: 150 }, // Level 10
-    { x: 150, y: 50 },  // FINISH (index 11)
+    { x: 150, y: 1050 }, // START (index 0)
+    { x: 150, y: 880 },  // Level 1 (index 1) - Straight approach to avoid early overlap
+    { x: 220, y: 780 },  // Level 2
+    { x: 280, y: 680 },  // Level 3
+    { x: 100, y: 580 },  // Level 4
+    { x: 50, y: 480 },   // Level 5
+    { x: 180, y: 380 },  // Level 6
+    { x: 250, y: 280 },  // Level 7
+    { x: 120, y: 180 },  // Level 8
+    { x: 50, y: 100 },   // Level 9
+    { x: 150, y: 50 },   // Level 10
+    { x: 150, y: 10 },   // FINISH (index 11)
 ];
 
 export function GameBoard() {
@@ -40,7 +40,7 @@ export function GameBoard() {
     ].sort((a, b) => b.pos - a.pos);
 
     return (
-        <div className="relative w-full min-h-[950px] bg-[#4ade80] rounded-t-[50px] mt-8 overflow-hidden border-t-8 border-[#2d5a27] shadow-2xl">
+        <div className="relative w-full min-h-[1200px] bg-[#4ade80] rounded-t-[50px] mt-8 overflow-hidden border-t-8 border-[#2d5a27] shadow-2xl">
             {/* 3D Grass Background Effect */}
             <div className="absolute inset-0 opacity-30 pointer-events-none"
                 style={{
@@ -51,7 +51,7 @@ export function GameBoard() {
             <div className="absolute inset-0 bg-gradient-to-b from-green-600/20 to-transparent pointer-events-none" />
 
             {/* Winding Brick Road Background */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 950">
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 1200">
                 <defs>
                     <pattern id="bricks" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
                         <rect width="10" height="10" fill="#cc7a00" />
@@ -86,12 +86,26 @@ export function GameBoard() {
                 />
             </svg>
 
-            {/* START Area */}
+            {/* START Area - Wooden Plank Aesthetic */}
             <div
-                className="absolute -translate-x-1/2 -translate-y-1/2 bg-white/20 border-4 border-white/40 rounded-3xl flex items-center justify-center p-4 shadow-xl"
-                style={{ left: PATH[0].x, top: PATH[0].y + 100, width: 100, height: 60 }}
+                className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-start pt-2"
+                style={{ left: PATH[0].x, top: PATH[0].y + 100, width: 160, height: 120 }}
             >
-                <span className="text-white font-black text-sm uppercase tracking-widest">Start</span>
+                {/* Wooden Plank Background */}
+                <div className="absolute inset-0 bg-[#8b5a2b] rounded-xl border-b-8 border-[#5d3a1a] shadow-2xl" />
+                <div className="absolute inset-0 bg-white/5 pointer-events-none rounded-xl" />
+
+                {/* Labels */}
+                <span className="relative z-10 text-[#f3e5ab] font-black text-[10px] uppercase tracking-[0.2em] opacity-80 mb-1">
+                    Ready to Race?
+                </span>
+                <span className="relative z-10 text-white font-black text-xl uppercase tracking-widest drop-shadow-md">
+                    Start
+                </span>
+
+                {/* Plank Detail Lines */}
+                <div className="absolute left-4 top-1/2 w-full h-[1px] bg-black/10 z-0" />
+                <div className="absolute left-4 top-1/3 w-full h-[1px] bg-black/10 z-0" />
             </div>
 
             {/* Spaces */}
@@ -114,7 +128,7 @@ export function GameBoard() {
                             ${isLocked ? "bg-slate-300 border-slate-400 text-slate-500 cursor-not-allowed shadow-none" :
                                 isCurrent ? "bg-brand-pink border-white text-white ring-4 ring-white/50 z-10 scale-110 shadow-[0_8px_0_rgba(190,24,93,0.4)]" :
                                     "bg-amber-100 border-amber-300 text-amber-900"}`}
-                        style={{ left: pos.x, top: pos.y + 100 }}
+                        style={{ left: pos.x, top: pos.y }}
                     >
                         {index + 1}
                         {isLocked && <span className="absolute -top-1 -right-1 text-sm bg-white rounded-full p-0.5 shadow-sm">🔒</span>}
@@ -127,17 +141,21 @@ export function GameBoard() {
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ repeat: Infinity, duration: 2 }}
                 className="absolute -translate-x-1/2 -translate-y-1/2 text-6xl drop-shadow-lg"
-                style={{ left: PATH[11].x, top: PATH[11].y + 100 }}
+                style={{ left: PATH[11].x, top: PATH[11].y }}
             >
                 🏁
             </motion.div>
 
             {/* Characters with Offset to prevent overlap */}
-            {allPositions.map((char, i) => {
+            {allPositions.map((char) => {
                 // Calculation offset: if multiple characters on same space, shift them X
                 const charsOnSameSpace = allPositions.filter(c => c.pos === char.pos);
                 const charIndexOnSpace = charsOnSameSpace.findIndex(c => c.id === char.id);
                 const offsetX = charsOnSameSpace.length > 1 ? (charIndexOnSpace - (charsOnSameSpace.length - 1) / 2) * 50 : 0;
+
+                // Vertical offset for START area (index 0) to avoid covering text
+                // Perfectly centered on the wooden plank
+                const offsetY = char.pos === 0 ? 35 : 0;
 
                 return (
                     <GameSprite
@@ -145,7 +163,7 @@ export function GameBoard() {
                         characterId={char.id}
                         position={{
                             x: PATH[char.pos].x + offsetX,
-                            y: PATH[char.pos].y + 100
+                            y: PATH[char.pos].y + offsetY
                         }}
                         isPlayer={char.isPlayer}
                     />
@@ -157,7 +175,14 @@ export function GameBoard() {
             <div className="absolute top-[250px] right-8 text-5xl drop-shadow-md">🏕️</div>
             <div className="absolute top-[450px] left-4 text-5xl drop-shadow-md animate-pulse">🌻</div>
             <div className="absolute top-[600px] right-12 text-5xl drop-shadow-md">🍄</div>
-            <div className="absolute top-[800px] left-14 text-5xl drop-shadow-md animate-bounce">🌈</div>
+            {/* Rainbow behind Space 1 */}
+            {/* Rainbow behind Space 1 */}
+            <div
+                className="absolute -translate-x-1/2 -translate-y-1/2 text-5xl drop-shadow-md animate-bounce pointer-events-none opacity-80 z-0"
+                style={{ left: PATH[1].x, top: PATH[1].y }}
+            >
+                🌈
+            </div>
             <div className="absolute top-[100px] right-20 text-4xl opacity-40">☁️</div>
             <div className="absolute top-[350px] left-20 text-4xl opacity-40 animate-pulse">☁️</div>
         </div>
