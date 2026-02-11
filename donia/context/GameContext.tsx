@@ -13,6 +13,7 @@ interface GameContextType {
     currentRoutine: Routine | null;
     startLevel: (levelIndex: number) => void;
     completeLevel: (success: boolean) => void;
+    exitLevel: () => void;
     resetGame: () => void;
 }
 
@@ -57,6 +58,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const exitLevel = () => {
+        setGameState("idle");
+        setCurrentRoutine(null);
+    };
+
     const advanceOpponents = () => {
         setOpponentPositions(prev => {
             const next = { ...prev };
@@ -93,6 +99,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
                 currentRoutine,
                 startLevel,
                 completeLevel,
+                exitLevel,
                 resetGame
             }}
         >

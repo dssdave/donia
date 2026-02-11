@@ -18,7 +18,7 @@ interface GuidedPlayerProps {
 
 export function GuidedPlayer({ routine }: GuidedPlayerProps) {
     const { character } = useCharacter();
-    const { completeLevel } = useGame();
+    const { completeLevel, exitLevel } = useGame();
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
@@ -103,9 +103,9 @@ export function GuidedPlayer({ routine }: GuidedPlayerProps) {
                 <p className="text-gray-500 mb-8">
                     Don't give up! You didn't get the point this time, but you can try again.
                 </p>
-                <Link href="/">
-                    <PastelButton variant="secondary">Back to Board</PastelButton>
-                </Link>
+                <PastelButton variant="secondary" onClick={exitLevel}>
+                    Back to Board
+                </PastelButton>
             </div>
         );
     }
@@ -126,9 +126,9 @@ export function GuidedPlayer({ routine }: GuidedPlayerProps) {
                 <p className="text-gray-500 mb-8">
                     You completed the level and moved forward on the board!
                 </p>
-                <Link href="/">
-                    <PastelButton>Back to Board</PastelButton>
-                </Link>
+                <PastelButton onClick={exitLevel}>
+                    Back to Board
+                </PastelButton>
             </div>
         );
     }
