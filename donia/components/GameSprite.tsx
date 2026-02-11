@@ -16,10 +16,10 @@ export function GameSprite({ characterId, position, isPlayer }: GameSpriteProps)
 
     return (
         <motion.div
-            animate={{ x: position.x, y: position.y }}
+            animate={{ left: `${position.x}%`, top: position.y }}
             transition={{ type: "spring", stiffness: 100, damping: 15 }}
             className={`absolute z-20 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none`}
-            style={{ left: 0, top: 0 }}
+            style={{ top: 0 }}
         >
             <div className={`text-4xl ${isPlayer ? "scale-125" : "scale-100 opacity-70"}`}>
                 {character.avatar}

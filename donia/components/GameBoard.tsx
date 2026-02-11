@@ -9,8 +9,8 @@ import { routines } from "@/lib/data/routines";
 
 // Path coordinates for START + 10 levels + FINISH
 const PATH = [
-    { x: 150, y: 1050 }, // START (index 0)
-    { x: 150, y: 880 },  // Level 1 (index 1) - Straight approach to avoid early overlap
+    { x: 150, y: 1100 }, // START (index 0)
+    { x: 150, y: 880 },  // Level 1 (index 1)
     { x: 220, y: 780 },  // Level 2
     { x: 280, y: 680 },  // Level 3
     { x: 100, y: 580 },  // Level 4
@@ -86,10 +86,18 @@ export function GameBoard() {
                 />
             </svg>
 
+            {/* Rainbow behind Space 1 */}
+            <div
+                className="absolute -translate-x-1/2 -translate-y-1/2 text-5xl drop-shadow-md animate-bounce pointer-events-none opacity-80 z-0"
+                style={{ left: `${(PATH[1].x / 300) * 100}%`, top: PATH[1].y }}
+            >
+                🌈
+            </div>
+
             {/* START Area - Wooden Plank Aesthetic */}
             <div
                 className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-start pt-2"
-                style={{ left: PATH[0].x, top: PATH[0].y + 100, width: 160, height: 120 }}
+                style={{ left: `${(PATH[0].x / 300) * 100}%`, top: PATH[0].y, width: 160, height: 120 }}
             >
                 {/* Wooden Plank Background */}
                 <div className="absolute inset-0 bg-[#8b5a2b] rounded-xl border-b-8 border-[#5d3a1a] shadow-2xl" />
@@ -104,15 +112,15 @@ export function GameBoard() {
                 </span>
 
                 {/* Plank Detail Lines */}
-                <div className="absolute left-4 top-1/2 w-full h-[1px] bg-black/10 z-0" />
-                <div className="absolute left-4 top-1/3 w-full h-[1px] bg-black/10 z-0" />
+                <div className="absolute left-4 top-1/2 right-4 h-[1px] bg-black/10 z-0" />
+                <div className="absolute left-4 top-1/3 right-4 h-[1px] bg-black/10 z-0" />
             </div>
 
             {/* Spaces */}
             {routines.map((routine, index) => {
-                const roadIndex = index + 1; // Levels are at PATH indices 1 to 10
+                const roadIndex = index + 1;
                 const pos = PATH[roadIndex];
-                const isLocked = index > currentLevel; // Routine i is locked if currentLevel < i
+                const isLocked = index > currentLevel;
                 const isCurrent = index === currentLevel;
 
                 return (
@@ -128,7 +136,7 @@ export function GameBoard() {
                             ${isLocked ? "bg-slate-300 border-slate-400 text-slate-500 cursor-not-allowed shadow-none" :
                                 isCurrent ? "bg-brand-pink border-white text-white ring-4 ring-white/50 z-10 scale-110 shadow-[0_8px_0_rgba(190,24,93,0.4)]" :
                                     "bg-amber-100 border-amber-300 text-amber-900"}`}
-                        style={{ left: pos.x, top: pos.y }}
+                        style={{ left: `${(pos.x / 300) * 100}%`, top: pos.y }}
                     >
                         {index + 1}
                         {isLocked && <span className="absolute -top-1 -right-1 text-sm bg-white rounded-full p-0.5 shadow-sm">🔒</span>}
@@ -141,28 +149,26 @@ export function GameBoard() {
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ repeat: Infinity, duration: 2 }}
                 className="absolute -translate-x-1/2 -translate-y-1/2 text-6xl drop-shadow-lg"
-                style={{ left: PATH[11].x, top: PATH[11].y }}
+                style={{ left: `${(PATH[11].x / 300) * 100}%`, top: PATH[11].y }}
             >
                 🏁
             </motion.div>
 
-            {/* Characters with Offset to prevent overlap */}
+            {/* Characters */}
             {allPositions.map((char) => {
-                // Calculation offset: if multiple characters on same space, shift them X
                 const charsOnSameSpace = allPositions.filter(c => c.pos === char.pos);
                 const charIndexOnSpace = charsOnSameSpace.findIndex(c => c.id === char.id);
                 const offsetX = charsOnSameSpace.length > 1 ? (charIndexOnSpace - (charsOnSameSpace.length - 1) / 2) * 50 : 0;
 
-                // Vertical offset for START area (index 0) to avoid covering text
-                // Perfectly centered on the wooden plank
-                const offsetY = char.pos === 0 ? 35 : 0;
+                // Vertical offset for START area
+                const offsetY = char.pos === 0 ? 30 : 0;
 
                 return (
                     <GameSprite
                         key={char.id}
                         characterId={char.id}
                         position={{
-                            x: PATH[char.pos].x + offsetX,
+                            x: ((PATH[char.pos].x + offsetX) / 300) * 100,
                             y: PATH[char.pos].y + offsetY
                         }}
                         isPlayer={char.isPlayer}
@@ -175,14 +181,6 @@ export function GameBoard() {
             <div className="absolute top-[250px] right-8 text-5xl drop-shadow-md">🏕️</div>
             <div className="absolute top-[450px] left-4 text-5xl drop-shadow-md animate-pulse">🌻</div>
             <div className="absolute top-[600px] right-12 text-5xl drop-shadow-md">🍄</div>
-            {/* Rainbow behind Space 1 */}
-            {/* Rainbow behind Space 1 */}
-            <div
-                className="absolute -translate-x-1/2 -translate-y-1/2 text-5xl drop-shadow-md animate-bounce pointer-events-none opacity-80 z-0"
-                style={{ left: PATH[1].x, top: PATH[1].y }}
-            >
-                🌈
-            </div>
             <div className="absolute top-[100px] right-20 text-4xl opacity-40">☁️</div>
             <div className="absolute top-[350px] left-20 text-4xl opacity-40 animate-pulse">☁️</div>
         </div>
