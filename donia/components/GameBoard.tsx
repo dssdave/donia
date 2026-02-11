@@ -120,8 +120,16 @@ export function GameBoard() {
             {routines.map((routine, index) => {
                 const roadIndex = index + 1;
                 const pos = PATH[roadIndex];
+
+                // Logic:
+                // isCompleted: Level already passed by character
+                // isCurrent: Character is standing on this space
+                // isPlayable: Available to click (Next or Completed)
+                // isLocked: Not reached yet
+
+                const isCompleted = (index + 1) < currentLevel;
+                const isCurrent = (index + 1) === currentLevel;
                 const isLocked = index > currentLevel;
-                const isCurrent = index === currentLevel;
 
                 return (
                     <motion.button
@@ -135,7 +143,8 @@ export function GameBoard() {
                         className={`absolute -translate-x-1/2 -translate-y-1/2 w-16 h-16 flex items-center justify-center font-black text-xl shadow-[0_6px_0_rgba(0,0,0,0.2)] border-2 transition-all rounded-xl
                             ${isLocked ? "bg-slate-300 border-slate-400 text-slate-500 cursor-not-allowed shadow-none" :
                                 isCurrent ? "bg-amber-100 border-brand-pink text-brand-pink ring-4 ring-brand-pink/30 z-10 scale-110 shadow-[0_8px_0_rgba(190,24,93,0.2)]" :
-                                    "bg-amber-100 border-amber-300 text-amber-900"}`}
+                                    isCompleted ? "bg-amber-100 border-amber-300 text-amber-900" :
+                                        "bg-slate-300 border-slate-400 text-slate-500 shadow-none"}`}
                         style={{ left: `${(pos.x / 300) * 100}%`, top: pos.y }}
                     >
                         {index + 1}
@@ -177,10 +186,10 @@ export function GameBoard() {
             })}
 
             {/* Rich Decorations */}
-            <div className="absolute top-20 left-8 text-5xl drop-shadow-md animate-bounce">🌲</div>
-            <div className="absolute top-[320px] right-4 text-5xl drop-shadow-md">🏕️</div>
-            <div className="absolute top-[520px] left-2 text-5xl drop-shadow-md animate-pulse">🌻</div>
-            <div className="absolute top-[670px] right-24 text-5xl drop-shadow-md">🍄</div>
+            <div className="absolute -translate-x-1/2 -translate-y-1/2 text-5xl drop-shadow-md animate-bounce pointer-events-none" style={{ left: '85%', top: 120 }}>🌲</div>
+            <div className="absolute -translate-x-1/2 -translate-y-1/2 text-5xl drop-shadow-md pointer-events-none" style={{ left: '90%', top: 320 }}>🏕️</div>
+            <div className="absolute -translate-x-1/2 -translate-y-1/2 text-5xl drop-shadow-md animate-pulse pointer-events-none" style={{ left: '10%', top: 520 }}>🌻</div>
+            <div className="absolute -translate-x-1/2 -translate-y-1/2 text-5xl drop-shadow-md pointer-events-none" style={{ left: '15%', top: 720 }}>🍄</div>
             <div className="absolute top-[100px] right-20 text-4xl opacity-40">☁️</div>
             <div className="absolute top-[350px] left-20 text-4xl opacity-40 animate-pulse">☁️</div>
         </div>
