@@ -9,9 +9,12 @@ export default function AdminDashboard() {
                     <h1 className="text-3xl font-extrabold text-amber-500 tracking-tight">VIP Content Builder</h1>
                     <p className="text-slate-500 mt-1">Manage routines, exercises, and generate character-consistent videos.</p>
                 </div>
-                <button className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg font-semibold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]">
+                <Link
+                    href="/vip/routines/new"
+                    className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg font-semibold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
                     Create New Routine
-                </button>
+                </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

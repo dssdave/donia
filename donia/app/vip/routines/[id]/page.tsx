@@ -4,23 +4,37 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { routines, EXERCISE_BANK, RoutineStep, Routine } from "@/lib/data/routines";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function RoutineEditorPage() {
     const params = useParams();
     const router = useRouter();
     const routineId = params.id as string;
 
-    const initialRoutine = routines.find(r => r.id === routineId);
-    const [routine, setRoutine] = useState<Routine | undefined>(initialRoutine);
+    const [routine, setRoutine] = useState<Routine | undefined>(undefined);
     const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        const found = routines.find(r => r.id === routineId);
+        if (found) {
+            setRoutine(found);
+        } else {
+            // Initialize a new routine if it doesn't exist in the static list
+            setRoutine({
+                id: routineId,
+                title: routineId.split('-').slice(0, -1).join(' ').replace(/\b\w/g, l => l.toUpperCase()) || "New Routine",
+                description: "Describe your new routine here!",
+                duration: "0 min",
+                color: "bg-amber-400",
+                steps: []
+            });
+        }
+    }, [routineId]);
 
     if (!routine) {
         return (
-            <div className="text-center py-20">
-                <h2 className="text-2xl font-bold text-slate-900">Routine not found</h2>
-                <Link href="/vip" className="text-amber-600 hover:underline mt-4 inline-block font-bold">
-                    Return to VIP Dashboard
-                </Link>
+            <div className="flex items-center justify-center py-20">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
             </div>
         );
     }
